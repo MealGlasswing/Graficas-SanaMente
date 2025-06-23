@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <p id="response">
+            Hola
+        </p>
+    </div>
+
+    <script>
+        const text = document.getElementById('response');
+
+        const apiUrl = "https://script.google.com/macros/s/AKfycbzcFVO24UioDl7C_C2SkTY0s6AiV66Iykzc92VPlKgY3RpPbFB-CBhLLa27jOzbT4wSKA/exec";
+        /*fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Datos obtenidos:', data);
+            text.innerHTML = data.data.message;
+        })
+        .catch(error => {
+            console.error('Hubo un problema con la petición fetch:', error);
+        });*/
+
+        const data = {
+            nombre: "kevin",
+            edad: 19
+        }
+
+        fetch(apiUrl,{
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            text.innerHTML = data.data.mensaje;
+        })
+        .catch(error => {
+            console.log(error)
+        })
+
+        </script>
+</body>
+</html>
+
+
