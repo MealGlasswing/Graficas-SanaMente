@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+            justify-content: center;
+            display: flex;
+            align-items: center;
+        }
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .tooltip-content {
+            width: 450px;
+            background-color: #f9f9f9;
+            color: #333;
+            text-align: left;
+            border-radius: 5px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            flex-direction: row;
+        }
+
+        .tooltip-info {
+            margin-left: 10px;
+            font-size: smaller;
+        }
+
+        .tooltip-info table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            border-color: #00a9aa;
+        }
+
+        .tooltip-info table th{
+            
+        }
+
+        .tooltip-image {
+            width: 100%;
+            height: auto;
+            overflow: hidden;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="tooltip-container">
+        <div class="tooltip-content">
+            <div class="tooltip-image">
+                <img src="img/image.png" alt="Tooltip Image" style="width: 100%; border-radius: 5px;">
+            </div>
+            <div class="tooltip-info">
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>Departamento</th>
+                            <th>Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Guatemala</td>
+                            <td>125</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div   >
+    </div>
+</body>
+</html>
