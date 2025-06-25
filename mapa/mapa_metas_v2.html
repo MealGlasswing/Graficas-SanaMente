@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #container {
+    height: 500px;
+    min-width: 310px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.loading {
+    margin-top: 10em;
+    text-align: center;
+    color: #808080;
+}
+
+#popup-pie {
+    width: 280px;
+    height: 230px;
+    padding: 0.5em 1em;
+    cursor: default;
+}
+
+#annotation-header {
+    display: flex;
+    justify-content: space-between;
+    width: 280px;
+    align-items: center;
+    color: #333;
+    font-size: 1.45em;
+    font-weight: bold;
+    background: #e9e9e9;
+    padding: 0.4em 1em;
+    cursor: move;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+#annotation-close-btn {
+    width: 20px;
+    height: 20px;
+    padding: 1px;
+    color: #777;
+    text-align: center;
+    font-size: 0.7em;
+    font-weight: 700;
+    border: 1px solid #c5c5c5;
+    border-radius: 3px;
+    background: #f6f6f6;
+    cursor: pointer;
+    z-index: 999;
+}
+
+    </style>
+</head>
+<body>
+
+
+<script src="https://code.highcharts.com/maps/highmaps.js"></script>
+<script src="https://code.highcharts.com/modules/annotations.js"></script>
+<script src="https://code.highcharts.com/maps/modules/data.js"></script>
+<script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/maps/modules/offline-exporting.js"></script>
+<script src="https://code.highcharts.com/maps/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
+
+<div id="container">
+    <div class="loading">
+        <i class="icon-spinner icon-spin icon-large"></i>
+        Loading data from Google Spreadsheets...
+    </div>
+</div>
+
+
+<script>
+
+    const url = 'https://script.google.com/macros/s/AKfycbyAWFzDx7hcADbSE1D-rAT5AQgCKWqtS5TA_Fazb466-JAsoge1TQDXFdkJPxAWCMon/exec';
+    let globalUseData = null;
+    let proyectos = [];
+    let departamentos = [];
+
+    function getCode(departamento){
+        const codes = {
+            'Guatemala': 'gt-gu',
+            'Quiché': 'gt-qc',
+            'Huehuetenango': 'gt-hu',
+            'Quetzaltenango': 'gt-qz',
+            'Retalhuleu': 'gt-re',
+            'San Marcos': 'gt-sm',
+            'Santa Rosa': 'gt-sr',
+            'Escuintla': 'gt-es',
+            'Chimaltenango': 'gt-cm',
+            'Sololá': 'gt-so',
+            'Zacapa': 'gt-za',
+            'Jalapa': 'gt-ja',
+            'Suchitepéquez': 'gt-su',
+            'Jutiapa': 'gt-ju',
+            'El Progreso': 'gt-pr',
+            'Chiquimula': 'gt-cq',
+            'Baja Verapaz': 'gt-bv',
+            'Petén': 'gt-pe',
+            'Izabal': 'gt-iz',
+            'Sacatepéquez': 'gt-sa',
+            'Alta Verapaz': 'gt-av',
+            'Totonicapán': 'gt-to'
+        };
+        return codes[departamento] || '';
+    }
+
+
+    async function  chartMap() {
+    const mapData = await fetch(
+        'https://code.highcharts.com/mapdata/countries/gt/gt-all.topo.json'
+    ).then(response => response.json());
+    
+    const data_ = () =>{
+        let dataClean = [];
+
+        if (globalUseData != null) {
+            departamentos = globalUseData.departamentos;
+
+            departamentos.forEach(item => {
+                console.log(item);
+                /*if (code) {
+                    dataClean.push({
+                        code: code,
+                        name: item.departamento,
+                        sanamente: item.sanamente || 0,
+                        club: item.club || 0,
+                        voluntariado: item.voluntariado || 0,
+                        jli: item.jli || 0
+                    });
+                }*/
+            });
+        }
+    };
+
+    data_();
+    const data = [
+        { code: 'gt-gu', name: 'Guatemala', sanamente: 25, club: 15, voluntariado: 8, jli: 12 },
+        { code: 'gt-qc', name: 'Quiché', sanamente: 10, club: 8, voluntariado: 5, jli: 7 },
+        { code: 'gt-hu', name: 'Huehuetenango', sanamente: 12, club: 9, voluntariado: 6, jli: 8 },
+        { code: 'gt-qz', name: 'Quetzaltenango', sanamente: 13, club: 10, voluntariado: 7, jli: 9 },
+        { code: 'gt-re', name: 'Retalhuleu', sanamente: 14, club: 6, voluntariado: 3, jli: 5 },
+        { code: 'gt-sm', name: 'San Marcos', sanamente: 15, club: 12, voluntariado: 0, jli: 0 },
+        { code: 'gt-sr', name: 'Santa Rosa', sanamente: 20, club: 10, voluntariado: 5, jli: 6 },
+        { code: 'gt-es', name: 'Escuintla', sanamente: 18, club: 14, voluntariado: 4, jli: 3 },
+        { code: 'gt-cm', name: 'Chimaltenango', sanamente: 22, club: 11, voluntariado: 2, jli: 4 },
+        { code: 'gt-so', name: 'Sololá', sanamente: 16, club: 9, voluntariado: 1, jli: 2 },
+        { code: 'gt-za', name: 'Zacapa', sanamente: 11, club: 7, voluntariado: 3, jli: 4 },
+        { code: 'gt-ja', name: 'Jalapa', sanamente: 19, club: 13, voluntariado: 2, jli: 1 },
+        { code: 'gt-su', name: 'Suchitepéquez', sanamente: 17, club: 8, voluntariado: 6, jli: 5 },
+        { code: 'gt-ju', name: 'Jutiapa', sanamente: 21, club: 10, voluntariado: 4, jli: 3 },
+        { code: 'gt-pr', name: 'El Progreso', sanamente: 9, club: 5, voluntariado: 2, jli: 1 },
+        { code: 'gt-cq', name: 'Chiquimula', sanamente: 8, club: 4, voluntariado: 3, jli: 2 },
+        { code: 'gt-bv', name: 'Baja Verapaz', sanamente: 6, club: 3, voluntariado: 1, jli: 0 },
+        { code: 'gt-pe', name: 'Petén', sanamente: 5, club: 2, voluntariado: 0, jli: 0 },
+        { code: 'gt-iz', name: 'Izabal', sanamente: 7, club: 4, voluntariado: 2, jli: 1 },
+        { code: 'gt-sa', name: 'Sacatepéquez', sanamente: 23, club: 15, voluntariado: 5, jli: 6 },
+        { code: 'gt-av', name: 'Alta Verapaz', sanamente: 8, club: 5, voluntariado: 2, jli: 1 },
+        { code: 'gt-to', name: 'Totonicapán', sanamente: 10, club: 6, voluntariado: 2, jli: 2 }
+    ];
+
+    const chartData = data.map((item, idx) => ({
+        'hc-key': item.code,
+        value: item.sanamente + item.club + item.voluntariado + item.jli,
+        name: item.name,
+        row: idx,
+        sanamente: item.sanamente,
+        club: item.club,
+        voluntariado: item.voluntariado,
+        jli: item.jli
+    }));
+
+    function pointClick() {
+        const chart = this.series.chart;
+        chart.removeAnnotation('election-popup');
+        chart.addAnnotation({
+            id: 'election-popup',
+            labelOptions: {
+                useHTML: true,
+                backgroundColor: '#fff'
+            },
+            labels: [{
+                point: {
+                    x: chart.plotWidth / 2,
+                    y: chart.plotHeight / 10
+                },
+                text: `
+                    <div id="annotation-header">
+                        <span>${this.name}</span>
+                        <button id="annotation-close-btn">X</button>
+                    </div>
+                    <div id="popup-pie"></div>
+                `,
+                shape: 'rect'
+            }],
+            zIndex: 10
+        });
+        setTimeout(() => {
+            document.getElementById('annotation-close-btn')?.addEventListener('click', function () {
+                chart.removeAnnotation('election-popup');
+            });
+            // Renderizar el gráfico de pastel con los cuatro proyectos
+            Highcharts.chart('popup-pie', {
+                chart: { type: 'pie', height: 230, width: 280 },
+                title: { text: null },
+                legend: { enabled: true },
+                series: [{
+                    name: 'Proyectos',
+                    
+                    data: [
+                        { name: 'Sanamente', y: this.sanamente, color: '#00a9aa' },
+                        { name: 'Club de niñas', y: this.club, color: '#993568' },
+                        { name: 'Voluntariado', y: this.voluntariado, color: '#ffd336' },
+                        { name: 'JLI', y: this.jli, color: '#e32321' }
+                    ],
+                    dataLabels: { format: '{point.name}: {point.percentage:.1f}%' },
+                    showInLegend: true
+                }]
+            });
+        }, 100);
+    }
+
+    const options = {
+        chart: {
+            type: 'map',
+            map: mapData,
+            renderTo: 'container',
+            borderWidth: 1,
+            spacingBottom: 1
+        },
+        title: {
+            text: 'Datos por departamento de Guatemala',
+            align: 'left'
+        },
+        subtitle: {
+            text: 'Fuente: Datos de ejemplo',
+            align: 'left'
+        },
+        legend: {
+            align: 'right',
+            verticalAlign: 'top',
+            x: -100,
+            y: 70,
+            floating: true,
+            layout: 'vertical',
+            valueDecimals: 0,
+            backgroundColor: `color-mix(
+                in srgb,
+                var(--highcharts-background-color, white),
+                transparent 15%
+            )`
+        },
+        mapNavigation: {
+            enabled: true,
+            enableButtons: false
+        },
+        colorAxis: {
+            min: 0,
+            stops: [
+                [0, '#e6f2ff'],
+                [0.5, '#3399ff'],
+                [1, '#003366']
+            ]
+        },
+        series: [{
+            data: chartData,
+            joinBy: 'hc-key',
+            dataLabels: {
+                enabled: true,
+                color: '#FFFFFF',
+                format: '{point.name}',
+                style: {
+                    textTransform: 'capitalize'
+                }
+            },
+            name: 'Valor',
+            point: {
+                events: {
+                    click: pointClick
+                }
+            },
+            tooltip: {
+                pointFormat: '{point.name}: <b>{point.value}</b>'
+            },
+            cursor: 'pointer'
+        }, {
+            name: 'Separators',
+            type: 'mapline',
+            nullColor: 'silver',
+            showInLegend: false,
+            enableMouseTracking: false,
+            accessibility: {
+                enabled: false
+            }
+        }]
+    };
+
+    Highcharts.mapChart('container', options);
+};
+
+
+function getTerritorial(){
+    fetch(url)
+    .then(response => {
+        if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+        return response.json();
+    })
+    .then(data => {
+        globalUseData = data.imple_territorial;
+        console.log('Datos obtenidos:', globalUseData);
+        chartMap();
+    })
+    .catch(error => {
+        console.error('Hubo un problema con la petición fetch:', error);
+    });
+}
+
+getTerritorial();
+
+function loadData() {
+    departamentos = globalUseData.departamentos || [];
+    proyectos = [
+        globalUseData.sa
+    ] || [];
+}
+
+</script>
+</body>
+</html>
