@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Datos Territoriales</title>
     <style>
         #container {
     height: 500px;
@@ -55,6 +55,10 @@
     z-index: 999;
 }
 
+.highcharts-credits{
+    display:  none;
+}
+
     </style>
 </head>
 <body>
@@ -71,7 +75,7 @@
 <div id="container">
     <div class="loading">
         <i class="icon-spinner icon-spin icon-large"></i>
-        Loading data from Google Spreadsheets...
+        Cargando data...
     </div>
 </div>
 
@@ -122,57 +126,39 @@
 
         if (globalUseData != null) {
             departamentos = globalUseData.departamentos;
+            proyectos = globalUseData.proyectos;
+            
 
-            departamentos.forEach(item => {
-                console.log(item);
-                /*if (code) {
-                    dataClean.push({
-                        code: code,
-                        name: item.departamento,
-                        sanamente: item.sanamente || 0,
-                        club: item.club || 0,
-                        voluntariado: item.voluntariado || 0,
-                        jli: item.jli || 0
-                    });
-                }*/
+            departamentos.forEach((item, index) => {
+                
+                dataClean.push({
+                    code: getCode(item),
+                    name: item,
+                    educacion: Number(proyectos.indicadorTerritorialEducacionValue[index + 1]) || 0,
+                    sanamente: Number(proyectos.indicadorTerritorialSanamenteValue[index + 1]) || 0,
+                    club: Number(proyectos.indicadorTerritorialClubnnValue[index + 1]) || 0,
+                    programas: Number(proyectos.indicadorTerritorialProgramasValue[index + 1]) || 0,
+                    jli: Number(proyectos.indicadorTerritorialJliValue[index + 1]) || 0
+                });
+                
             });
         }
+
+        return dataClean;
     };
 
-    data_();
-    const data = [
-        { code: 'gt-gu', name: 'Guatemala', sanamente: 25, club: 15, voluntariado: 8, jli: 12 },
-        { code: 'gt-qc', name: 'Quiché', sanamente: 10, club: 8, voluntariado: 5, jli: 7 },
-        { code: 'gt-hu', name: 'Huehuetenango', sanamente: 12, club: 9, voluntariado: 6, jli: 8 },
-        { code: 'gt-qz', name: 'Quetzaltenango', sanamente: 13, club: 10, voluntariado: 7, jli: 9 },
-        { code: 'gt-re', name: 'Retalhuleu', sanamente: 14, club: 6, voluntariado: 3, jli: 5 },
-        { code: 'gt-sm', name: 'San Marcos', sanamente: 15, club: 12, voluntariado: 0, jli: 0 },
-        { code: 'gt-sr', name: 'Santa Rosa', sanamente: 20, club: 10, voluntariado: 5, jli: 6 },
-        { code: 'gt-es', name: 'Escuintla', sanamente: 18, club: 14, voluntariado: 4, jli: 3 },
-        { code: 'gt-cm', name: 'Chimaltenango', sanamente: 22, club: 11, voluntariado: 2, jli: 4 },
-        { code: 'gt-so', name: 'Sololá', sanamente: 16, club: 9, voluntariado: 1, jli: 2 },
-        { code: 'gt-za', name: 'Zacapa', sanamente: 11, club: 7, voluntariado: 3, jli: 4 },
-        { code: 'gt-ja', name: 'Jalapa', sanamente: 19, club: 13, voluntariado: 2, jli: 1 },
-        { code: 'gt-su', name: 'Suchitepéquez', sanamente: 17, club: 8, voluntariado: 6, jli: 5 },
-        { code: 'gt-ju', name: 'Jutiapa', sanamente: 21, club: 10, voluntariado: 4, jli: 3 },
-        { code: 'gt-pr', name: 'El Progreso', sanamente: 9, club: 5, voluntariado: 2, jli: 1 },
-        { code: 'gt-cq', name: 'Chiquimula', sanamente: 8, club: 4, voluntariado: 3, jli: 2 },
-        { code: 'gt-bv', name: 'Baja Verapaz', sanamente: 6, club: 3, voluntariado: 1, jli: 0 },
-        { code: 'gt-pe', name: 'Petén', sanamente: 5, club: 2, voluntariado: 0, jli: 0 },
-        { code: 'gt-iz', name: 'Izabal', sanamente: 7, club: 4, voluntariado: 2, jli: 1 },
-        { code: 'gt-sa', name: 'Sacatepéquez', sanamente: 23, club: 15, voluntariado: 5, jli: 6 },
-        { code: 'gt-av', name: 'Alta Verapaz', sanamente: 8, club: 5, voluntariado: 2, jli: 1 },
-        { code: 'gt-to', name: 'Totonicapán', sanamente: 10, club: 6, voluntariado: 2, jli: 2 }
-    ];
+    const data = data_();
 
+    console.log(data)
     const chartData = data.map((item, idx) => ({
         'hc-key': item.code,
-        value: item.sanamente + item.club + item.voluntariado + item.jli,
+        value: item.sanamente + item.club + item.programas + item.jli + item.educacion,
         name: item.name,
         row: idx,
+        educacion: item.educacion,
         sanamente: item.sanamente,
         club: item.club,
-        voluntariado: item.voluntariado,
+        programas: item.programas,
         jli: item.jli
     }));
 
@@ -216,7 +202,8 @@
                     data: [
                         { name: 'Sanamente', y: this.sanamente, color: '#00a9aa' },
                         { name: 'Club de niñas', y: this.club, color: '#993568' },
-                        { name: 'Voluntariado', y: this.voluntariado, color: '#ffd336' },
+                        { name: 'programas', y: this.programas, color: '#ffd336' },
+                        { name: 'educacion', y: this.educacion, color: '#0092a0' },
                         { name: 'JLI', y: this.jli, color: '#e32321' }
                     ],
                     dataLabels: { format: '{point.name}: {point.percentage:.1f}%' },
@@ -231,15 +218,15 @@
             type: 'map',
             map: mapData,
             renderTo: 'container',
-            borderWidth: 1,
+            borderWidth: 0,
             spacingBottom: 1
         },
         title: {
-            text: 'Datos por departamento de Guatemala',
+            text: 'Glasswing international',
             align: 'left'
         },
         subtitle: {
-            text: 'Fuente: Datos de ejemplo',
+            text: 'Informacion Territorial',
             align: 'left'
         },
         legend: {
@@ -263,9 +250,9 @@
         colorAxis: {
             min: 0,
             stops: [
-                [0, '#e6f2ff'],
-                [0.5, '#3399ff'],
-                [1, '#003366']
+                [0, '#54ec80'],
+                [0.5, '#00a9aa'],
+                [1, '#008584']
             ]
         },
         series: [{
